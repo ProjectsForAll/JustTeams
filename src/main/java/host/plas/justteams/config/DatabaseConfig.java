@@ -49,13 +49,13 @@ public class DatabaseConfig extends SimpleConfiguration {
     public String getDatabaseDatabase() {
         reloadResource();
 
-        return getOrSetDefault("database.database", "example");
+        return getOrSetDefault("database.database", "teams");
     }
 
     public String getDatabaseTablePrefix() {
         reloadResource();
 
-        return getOrSetDefault("database.table-prefix", "example_");
+        return getOrSetDefault("database.table-prefix", "teams_");
     }
 
     public DatabaseType getDatabaseType() {
@@ -67,7 +67,7 @@ public class DatabaseConfig extends SimpleConfiguration {
     public String getSqliteFileName() {
         reloadResource();
 
-        return getOrSetDefault("database.sqlite-file-name", "example.db");
+        return getOrSetDefault("database.sqlite-file-name", "teams.db");
     }
 
     public ConnectorSet getConnectorSet() {

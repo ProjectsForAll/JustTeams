@@ -3,6 +3,10 @@ package host.plas.justteams.config;
 import host.plas.justteams.JustTeams;
 import tv.quaint.storage.resources.flat.simple.SimpleConfiguration;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentSkipListSet;
+
 public class MainConfig extends SimpleConfiguration {
     public MainConfig() {
         super("config.yml", JustTeams.getInstance(), true);
@@ -10,18 +14,12 @@ public class MainConfig extends SimpleConfiguration {
 
     @Override
     public void init() {
-        getMaxPermissionPrefix();
+        getPvpWorlds();
     }
 
-    public String getMaxPermissionPrefix() {
+    public ConcurrentSkipListSet<String> getPvpWorlds() {
         reloadResource();
 
-        return getOrSetDefault("max.permission-prefix", "justtags.max.");
-    }
-
-    public int getMaxDefault() {
-        reloadResource();
-
-        return getOrSetDefault("max.default", 3);
+        return new ConcurrentSkipListSet<>(getOrSetDefault("max.permission-prefix", new ArrayList<>(List.of("fightworld"))));
     }
 }
