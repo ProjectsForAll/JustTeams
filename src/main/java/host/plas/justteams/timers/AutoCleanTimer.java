@@ -13,8 +13,6 @@ public class AutoCleanTimer extends BaseRunnable {
         TeamManager.ensurePlayers();
 
         TeamManager.getPlayers().forEach(tagPlayer -> {
-            tagPlayer.cleanMap();
-
             if (! tagPlayer.isOnline()) {
                 TeamManager.unregisterPlayer(tagPlayer);
             }
