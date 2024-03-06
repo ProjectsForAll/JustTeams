@@ -1,4 +1,4 @@
-package host.plas.exampleproject.managers;
+package host.plas.justtags.managers;
 
 import io.streamlined.bukkit.instances.BaseRunnable;
 import lombok.Getter;

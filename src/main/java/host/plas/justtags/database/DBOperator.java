@@ -1,6 +1,6 @@
-package host.plas.exampleproject.database;
+package host.plas.justtags.database;
 
-import host.plas.exampleproject.ExampleProject;
+import host.plas.justtags.JustTags;
 import io.streamlined.bukkit.MessageUtils;
 import io.streamlined.bukkit.lib.thebase.lib.hikari.HikariConfig;
 import io.streamlined.bukkit.lib.thebase.lib.hikari.HikariDataSource;
@@ -87,33 +87,27 @@ public class DBOperator {
 
     public ExecutionResult execute(String statement) {
         AtomicReference<ExecutionResult> result = new AtomicReference<>(ExecutionResult.ERROR);
-        try (Connection connection = getConnection()) {
-            try (Statement stmt = connection.createStatement()) {
-                if (stmt.execute(statement)) result.set(ExecutionResult.YES);
-                else result.set(ExecutionResult.NO);
-            } catch (Exception e) {
-                MessageUtils.logInfo("Failed to execute statement: " + statement, e);
-                result.set(ExecutionResult.ERROR);
-            }
+
+        try {
+            Connection connection = getConnection();
+            Statement stmt = connection.createStatement();
+
+            if (stmt.execute(statement)) result.set(ExecutionResult.YES);
+            else result.set(ExecutionResult.NO);
         } catch (Exception e) {
             MessageUtils.logInfo("Failed to execute statement: " + statement, e);
-            result.set(ExecutionResult.ERROR);
         }
 
         return result.get();
     }
 
     public void executeQuery(String statement, DBAction action) {
-        try (Connection connection = getConnection()) {
-            try (Statement stmt = connection.createStatement()) {
-                try (ResultSet set = stmt.executeQuery(statement)) {
-                    action.accept(set);
-                } catch (Exception e) {
-                    MessageUtils.logInfo("Failed to execute query: " + statement, e);
-                }
-            } catch (Exception e) {
-                MessageUtils.logInfo("Failed to execute query: " + statement, e);
-            }
+        try {
+            Connection connection = getConnection();
+            Statement stmt = connection.createStatement();
+            ResultSet set = stmt.executeQuery(statement);
+
+            action.accept(set);
         } catch (Exception e) {
             MessageUtils.logInfo("Failed to execute query: " + statement, e);
         }
@@ -143,7 +137,7 @@ public class DBOperator {
     }
 
     public static File getDatabaseFolder() {
-        File folder = new File(ExampleProject.getInstance().getDataFolder(), "storage");
+        File folder = new File(JustTags.getInstance().getDataFolder(), "storage");
 
         if (! folder.exists()) {
             folder.mkdirs();

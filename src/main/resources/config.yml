@@ -1,0 +1,10 @@
+# Max tags configuration.
+max:
+  # The permission prefix for max tags.
+  # Default: "justtags.max."
+  # If player has the permission "justtags.max.5", they can use 5 tags.
+  permission-prefix: "justtags.max."
+  # The default max tags for players.
+  # Default: 3
+  # The plugin uses the highest value between this and the permission value.
+  default: 3

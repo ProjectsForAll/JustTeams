@@ -1,4 +1,4 @@
-package host.plas.exampleproject.database;
+package host.plas.justtags.database;
 
 import lombok.Getter;
 import lombok.Setter;

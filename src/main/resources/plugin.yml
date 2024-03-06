@@ -1,3 +1,11 @@
 name: '${name}'
 version: '${version}'
 main: '${main}'
+depend:
+  - PlaceholderAPI
+
+commands:
+  justtags:
+    description: Main command for JustTags
+    permission: justtags.command.justtags
+    aliases: [jtags, tag, tags]

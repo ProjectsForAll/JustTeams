@@ -1,13 +1,13 @@
-package host.plas.exampleproject.config;
+package host.plas.justtags.config;
 
-import host.plas.exampleproject.ExampleProject;
-import host.plas.exampleproject.database.ConnectorSet;
-import host.plas.exampleproject.database.DatabaseType;
+import host.plas.justtags.JustTags;
+import host.plas.justtags.database.ConnectorSet;
+import host.plas.justtags.database.DatabaseType;
 import tv.quaint.storage.resources.flat.simple.SimpleConfiguration;
 
 public class DatabaseConfig extends SimpleConfiguration {
     public DatabaseConfig() {
-        super("database-config.yml", ExampleProject.getInstance(), false);
+        super("database-config.yml", JustTags.getInstance(), false);
     }
 
     @Override

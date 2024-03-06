@@ -1,4 +1,4 @@
-package host.plas.exampleproject.database;
+package host.plas.justtags.database;
 
 import java.sql.ResultSet;
 import java.util.function.Consumer;
