@@ -6,7 +6,7 @@ depend:
 folia-supported: true
 
 commands:
-  justtags:
+  justteams:
     description: Main command for JustTags
-    permission: justtags.command.justtags
-    aliases: [jtags, tag, tags]
+    permission: justteams.command.justteams
+    aliases: [jteams, jtm, teams]

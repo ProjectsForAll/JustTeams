@@ -104,7 +104,7 @@ public class TeamIcon extends Icon {
                 MessageUtils.colorizeComp("&eJoined&7? " + (isJoined(player, tagIdentifier) ? "&aYes" : "&cNo")),
                 MessageUtils.colorizeComp("&eName&7: &f" + team.getValue()),
                 MessageUtils.colorizeComp(""),
-                MessageUtils.colorizeComp("7Click to " + (isJoined(player, tagIdentifier) ? "&cleave" : "&ajoin") + " &7this tag.")
+                MessageUtils.colorizeComp("&7Click to " + (isJoined(player, tagIdentifier) ? "&cleave" : "&ajoin") + " &7this tag.")
         );
     }
 
@@ -121,7 +121,7 @@ public class TeamIcon extends Icon {
                 MessageUtils.colorizeHard("&eJoined&7? " + (isJoined(player, tagIdentifier) ? "&aYes" : "&cNo")),
                 MessageUtils.colorizeHard("&eName&7: &f" + team.getValue()),
                 MessageUtils.colorizeHard(""),
-                MessageUtils.colorizeHard("7Click to " + (isJoined(player, tagIdentifier) ? "&cleave" : "&ajoin") + " &7this tag.")
+                MessageUtils.colorizeHard("&7Click to " + (isJoined(player, tagIdentifier) ? "&cleave" : "&ajoin") + " &7this tag.")
         );
     }
 

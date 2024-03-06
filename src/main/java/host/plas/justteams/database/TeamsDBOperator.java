@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class TeamsDBOperator extends DBOperator {
     public TeamsDBOperator(ConnectorSet set) {
-        super(set, "Pacifism");
+        super(set, "JustTeams");
     }
 
     public void ensureDatabase() {
