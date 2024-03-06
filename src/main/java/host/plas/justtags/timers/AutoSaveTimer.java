@@ -1,8 +1,8 @@
 package host.plas.justtags.timers;
 
-import host.plas.justtags.data.ConfiguredTag;
-import host.plas.justtags.data.TagPlayer;
-import host.plas.justtags.managers.TagManager;
+import host.plas.justtags.data.ConfiguredTeam;
+import host.plas.justtags.data.TeamPlayer;
+import host.plas.justtags.managers.TeamManager;
 import io.streamlined.bukkit.instances.BaseRunnable;
 
 public class AutoSaveTimer extends BaseRunnable {
@@ -12,7 +12,7 @@ public class AutoSaveTimer extends BaseRunnable {
 
     @Override
     public void execute() {
-        TagManager.getPlayers().forEach(TagPlayer::save);
-        TagManager.getTags().forEach(ConfiguredTag::save);
+        TeamManager.getPlayers().forEach(TeamPlayer::save);
+        TeamManager.getTags().forEach(ConfiguredTeam::save);
     }
 }

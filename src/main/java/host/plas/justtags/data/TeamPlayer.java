@@ -1,7 +1,7 @@
 package host.plas.justtags.data;
 
 import host.plas.justtags.JustTags;
-import host.plas.justtags.managers.TagManager;
+import host.plas.justtags.managers.TeamManager;
 import io.streamlined.bukkit.lib.thebase.lib.re2j.Matcher;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +11,6 @@ import tv.quaint.objects.Identifiable;
 import tv.quaint.utils.MatcherUtils;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentSkipListMap;
@@ -21,7 +20,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 @Getter @Setter
-public class TagPlayer implements Identifiable {
+public class TeamPlayer implements Identifiable {
     public UUID getUuid() {
         return UUID.fromString(identifier);
     }
@@ -31,42 +30,29 @@ public class TagPlayer implements Identifiable {
     }
 
     private String identifier;
-    private ConcurrentSkipListMap<Integer, ConfiguredTag> container;
-    private ConcurrentSkipListSet<ConfiguredTag> available;
+    private Optional<ConfiguredTeam> chosenTeam;
 
-    public TagPlayer(String uuid) {
+    public TeamPlayer(String uuid) {
         this.identifier = uuid;
-        container = new ConcurrentSkipListMap<>();
-        available = new ConcurrentSkipListSet<>();
+        this.chosenTeam = Optional.empty();
     }
 
-    private ConfiguredTag putTagHard(int index, ConfiguredTag value) {
-        return container.put(index, value);
+    public TeamPlayer selectTeam(ConfiguredTeam team) {
+        this.chosenTeam = Optional.of(team);
+        return this;
     }
 
-    public void putTag(int index, ConfiguredTag value) {
-        putTagHard(index, value);
-
-        concatMap();
+    public TeamPlayer unselectTeam() {
+        this.chosenTeam = Optional.empty();
+        return this;
     }
 
-    public void putTag(int index, String identifier) {
-        getConfiguredTag(identifier).ifPresent(tag -> container.put(index, tag));
+    public TeamPlayer ifTeam(Consumer<ConfiguredTeam> team) {
+        chosenTeam.ifPresent(team);
+        return this;
     }
 
-    public void removeTag(int index) {
-        container.remove(index);
-    }
-
-    public void removeTag(String identifier) {
-        container.entrySet().stream().filter(entry -> entry.getValue().getIdentifier().equals(identifier)).forEach(entry -> container.remove(entry.getKey()));
-    }
-
-    public void removeTag(ConfiguredTag tag) {
-        container.entrySet().stream().filter(entry -> entry.getValue().getIdentifier().equals(tag.getIdentifier())).forEach(entry -> container.remove(entry.getKey()));
-    }
-
-    public boolean hasTag(ConfiguredTag tag) {
+    public boolean hasTag(ConfiguredTeam tag) {
         return container.containsValue(tag);
     }
 
@@ -81,7 +67,7 @@ public class TagPlayer implements Identifiable {
     public void concatMap() {
         cleanMap();
 
-        ConcurrentSkipListMap<Integer, ConfiguredTag> cloned = new ConcurrentSkipListMap<>(getContainer());
+        ConcurrentSkipListMap<Integer, ConfiguredTeam> cloned = new ConcurrentSkipListMap<>(getContainer());
         AtomicInteger index = new AtomicInteger(0);
 
         clearTags();
@@ -95,7 +81,7 @@ public class TagPlayer implements Identifiable {
     }
 
     public void trimMap() {
-        ConcurrentSkipListMap<Integer, ConfiguredTag> cloned = new ConcurrentSkipListMap<>(getContainer());
+        ConcurrentSkipListMap<Integer, ConfiguredTeam> cloned = new ConcurrentSkipListMap<>(getContainer());
         AtomicInteger index = new AtomicInteger(0);
 
         clearTags();
@@ -109,7 +95,7 @@ public class TagPlayer implements Identifiable {
     public void cleanMap() {
         cleanAvailable();
 
-        ConcurrentSkipListMap<Integer, ConfiguredTag> cloned = new ConcurrentSkipListMap<>(getContainer());
+        ConcurrentSkipListMap<Integer, ConfiguredTeam> cloned = new ConcurrentSkipListMap<>(getContainer());
         AtomicInteger index = new AtomicInteger(0);
 
         clearTags();
@@ -121,7 +107,7 @@ public class TagPlayer implements Identifiable {
     }
 
     public void cleanAvailable() {
-        ConcurrentSkipListSet<ConfiguredTag> cloned = new ConcurrentSkipListSet<>(getAvailable());
+        ConcurrentSkipListSet<ConfiguredTeam> cloned = new ConcurrentSkipListSet<>(getAvailable());
 
         clearAvailableTags();
 
@@ -131,17 +117,17 @@ public class TagPlayer implements Identifiable {
         }).forEach(this::addAvailableTag);
     }
 
-    public Optional<ConfiguredTag> getTag(int index) {
-        ConfiguredTag found = container.get(index);
+    public Optional<ConfiguredTeam> getTag(int index) {
+        ConfiguredTeam found = container.get(index);
 
         return found == null ? Optional.empty() : Optional.of(found);
     }
 
-    public Optional<ConfiguredTag> getTag(String identifier) {
+    public Optional<ConfiguredTeam> getTag(String identifier) {
         return container.values().stream().filter(tag -> tag.getIdentifier().equals(identifier)).findFirst();
     }
 
-    public void addAvailableTag(ConfiguredTag tag) {
+    public void addAvailableTag(ConfiguredTeam tag) {
         available.add(tag);
     }
 
@@ -149,7 +135,7 @@ public class TagPlayer implements Identifiable {
         getConfiguredTag(identifier).ifPresent(this::addAvailableTag);
     }
 
-    public void removeAvailableTag(ConfiguredTag tag) {
+    public void removeAvailableTag(ConfiguredTeam tag) {
         available.remove(tag);
     }
 
@@ -157,7 +143,7 @@ public class TagPlayer implements Identifiable {
         getConfiguredTag(identifier).ifPresent(this::removeAvailableTag);
     }
 
-    public boolean hasAvailableTag(ConfiguredTag tag) {
+    public boolean hasAvailableTag(ConfiguredTeam tag) {
         return available.contains(tag);
     }
 
@@ -165,12 +151,12 @@ public class TagPlayer implements Identifiable {
         return available.stream().anyMatch(tag -> tag.getIdentifier().equals(identifier));
     }
 
-    public Optional<ConfiguredTag> getAvailableTag(String identifier) {
+    public Optional<ConfiguredTeam> getAvailableTag(String identifier) {
         return available.stream().filter(tag -> tag.getIdentifier().equals(identifier)).findFirst();
     }
 
-    public Optional<ConfiguredTag> getAvailableTag(int index) {
-        AtomicReference<Optional<ConfiguredTag>> tag = new AtomicReference<>(Optional.empty());
+    public Optional<ConfiguredTeam> getAvailableTag(int index) {
+        AtomicReference<Optional<ConfiguredTeam>> tag = new AtomicReference<>(Optional.empty());
 
         AtomicInteger i = new AtomicInteger(0);
         available.forEach(configuredTag -> {
@@ -249,7 +235,7 @@ public class TagPlayer implements Identifiable {
 
         int m = Math.min(getFinalMaxTags(), getContainer().size());
         for (int i = 0; i < m; i++) {
-            Optional<ConfiguredTag> tag = getTag(i);
+            Optional<ConfiguredTeam> tag = getTag(i);
             tag.ifPresent(configuredTag -> builder.append(configuredTag.getValue()));
         }
 
@@ -260,7 +246,7 @@ public class TagPlayer implements Identifiable {
         StringBuilder builder = new StringBuilder();
 
         for (int i = 0; i < getContainer().size(); i++) {
-            Optional<ConfiguredTag> tag = getTag(i);
+            Optional<ConfiguredTeam> tag = getTag(i);
 
             int finalI = i;
             tag.ifPresent(configuredTag -> builder.append("!!!").append(finalI).append("->->").append(configuredTag.getIdentifier()).append(";;;"));
@@ -295,16 +281,16 @@ public class TagPlayer implements Identifiable {
     }
 
     public void register() {
-        TagManager.registerPlayer(this);
+        TeamManager.registerPlayer(this);
     }
 
     public void unregister() {
-        TagManager.unregisterPlayer(this);
+        TeamManager.unregisterPlayer(this);
     }
 
     public void refreshTagInstances() {
         container.forEach((index, tag) -> {
-            Optional<ConfiguredTag> configuredTag = getConfiguredTag(tag.getIdentifier());
+            Optional<ConfiguredTeam> configuredTag = getConfiguredTag(tag.getIdentifier());
             if (configuredTag.isPresent()) {
                 putTagHard(index, configuredTag.get());
             } else {
@@ -320,9 +306,9 @@ public class TagPlayer implements Identifiable {
         save();
     }
 
-    public void insertTag(int index, ConfiguredTag tag) {
+    public void insertTag(int index, ConfiguredTeam tag) {
         if (getContainer().containsKey(index)) {
-            ConfiguredTag replaced = getContainer().replace(index, tag);
+            ConfiguredTeam replaced = getContainer().replace(index, tag);
             while (replaced != null) {
                 index ++;
                 replaced = getContainer().replace(index, tag);
@@ -350,7 +336,7 @@ public class TagPlayer implements Identifiable {
         return JustTags.getMainConfig().getMaxDefault();
     }
 
-    public static Optional<ConfiguredTag> getConfiguredTag(String identifier) {
-        return TagManager.getTag(identifier);
+    public static Optional<ConfiguredTeam> getConfiguredTag(String identifier) {
+        return TeamManager.getTeam(identifier);
     }
 }

@@ -3,6 +3,7 @@ version: '${version}'
 main: '${main}'
 depend:
   - PlaceholderAPI
+folia-supported: true
 
 commands:
   justtags:

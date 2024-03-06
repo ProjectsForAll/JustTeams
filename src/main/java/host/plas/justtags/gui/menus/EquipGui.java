@@ -1,11 +1,11 @@
 package host.plas.justtags.gui.menus;
 
-import host.plas.justtags.data.ConfiguredTag;
-import host.plas.justtags.data.TagPlayer;
+import host.plas.justtags.data.ConfiguredTeam;
+import host.plas.justtags.data.TeamPlayer;
 import host.plas.justtags.gui.GuiType;
 import host.plas.justtags.gui.TagGui;
 import host.plas.justtags.gui.icons.TagIcon;
-import host.plas.justtags.managers.TagManager;
+import host.plas.justtags.managers.TeamManager;
 import host.plas.justtags.utils.MessageUtils;
 import io.streamlined.bukkit.commands.Sender;
 import lombok.Getter;
@@ -41,30 +41,30 @@ public class EquipGui extends TagGui {
 
     public static void buildInner(EquipGui gui) {
         Player player = gui.player;
-        TagPlayer tagPlayer = TagManager.loadOrCreatePlayerAsync(player.getUniqueId().toString()).join();
+        TeamPlayer teamPlayer = TeamManager.loadOrCreatePlayerAsync(player.getUniqueId().toString()).join();
 
         int delta = gui.getCurrentPage() * 15 - 15; // no page 0
         for (int i = 0; i < 15; i++) {
-            if (delta >= tagPlayer.getAvailable().size()) {
+            if (delta >= teamPlayer.getAvailable().size()) {
                 break;
             }
 
-            TagIcon icon = new TagIcon(getDeltaTag(gui, delta), tagPlayer);
+            TagIcon icon = new TagIcon(getDeltaTag(gui, delta), teamPlayer);
 
             icon.onClick(event -> {
-                if (icon.isEquipped(tagPlayer, icon.getTagIdentifier())) {
-                    tagPlayer.removeTag(icon.getTagIdentifier());
+                if (icon.isEquipped(teamPlayer, icon.getTagIdentifier())) {
+                    teamPlayer.removeTag(icon.getTagIdentifier());
 
-                    tagPlayer.ifPlayer(p -> {
+                    teamPlayer.ifPlayer(p -> {
                         Sender sender = new Sender(p);
                         sender.sendMessage("&eYou have &cunequipped &ethe tag &f" + icon.getTagIdentifier() + "&e.");
                     });
 
                     reopen(gui);
                 } else {
-                    tagPlayer.putTag(tagPlayer.getContainer().size(), icon.getTagIdentifier());
+                    teamPlayer.putTag(teamPlayer.getContainer().size(), icon.getTagIdentifier());
 
-                    tagPlayer.ifPlayer(p -> {
+                    teamPlayer.ifPlayer(p -> {
                         Sender sender = new Sender(p);
                         sender.sendMessage("&eYou have &aequipped &ethe tag &f" + icon.getTagIdentifier() + "&e.");
                     });
@@ -85,10 +85,10 @@ public class EquipGui extends TagGui {
 
     public static String getDeltaTag(EquipGui gui, int delta) {
         Player player = gui.player;
-        TagPlayer tagPlayer = TagManager.loadOrCreatePlayerAsync(player.getUniqueId().toString()).join();
+        TeamPlayer teamPlayer = TeamManager.loadOrCreatePlayerAsync(player.getUniqueId().toString()).join();
 
         String tag = null;
-        Optional<ConfiguredTag> t = tagPlayer.getAvailableTag(delta);
+        Optional<ConfiguredTeam> t = teamPlayer.getAvailableTag(delta);
         if (t.isPresent()) {
             tag = t.get().getIdentifier();
         }
@@ -179,9 +179,9 @@ public class EquipGui extends TagGui {
     }
 
     public static int getMaxPages(Player player) {
-        TagPlayer tagPlayer = TagManager.loadOrCreatePlayerAsync(player.getUniqueId().toString()).join();
+        TeamPlayer teamPlayer = TeamManager.loadOrCreatePlayerAsync(player.getUniqueId().toString()).join();
 
-        int totalTags = tagPlayer.getAvailable().size();
+        int totalTags = teamPlayer.getAvailable().size();
 
         // if there are 15 or less tags, there is only 1 page
         // if there are 30 or less tags, there are 2 pages

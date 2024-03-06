@@ -1,8 +1,8 @@
 package host.plas.justtags.database;
 
-import host.plas.justtags.data.ConfiguredTag;
-import host.plas.justtags.data.TagPlayer;
-import host.plas.justtags.managers.TagManager;
+import host.plas.justtags.data.ConfiguredTeam;
+import host.plas.justtags.data.TeamPlayer;
+import host.plas.justtags.managers.TeamManager;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -35,7 +35,7 @@ public class TagsDBOperator extends DBOperator {
         this.ensureTable();
     }
 
-    public CompletableFuture<Boolean> savePlayer(TagPlayer player) {
+    public CompletableFuture<Boolean> savePlayer(TeamPlayer player) {
         return CompletableFuture.supplyAsync(() -> {
             ensureUsable();
 
@@ -53,7 +53,7 @@ public class TagsDBOperator extends DBOperator {
         });
     }
 
-    public CompletableFuture<Optional<TagPlayer>> loadPlayer(String uuid) {
+    public CompletableFuture<Optional<TeamPlayer>> loadPlayer(String uuid) {
         return CompletableFuture.supplyAsync(() -> {
             if (! playerExists(uuid).join()) return Optional.empty();
 
@@ -65,7 +65,7 @@ public class TagsDBOperator extends DBOperator {
 
             s1 = s1.replace("%uuid%", uuid);
 
-            AtomicReference<Optional<TagPlayer>> atomicReference = new AtomicReference<>(Optional.empty());
+            AtomicReference<Optional<TeamPlayer>> atomicReference = new AtomicReference<>(Optional.empty());
             this.executeQuery(s1, set -> {
                 if (set == null) {
                     atomicReference.set(Optional.empty());
@@ -74,7 +74,7 @@ public class TagsDBOperator extends DBOperator {
 
                 try {
                     if (set.next()) {
-                        TagPlayer player = new TagPlayer(uuid);
+                        TeamPlayer player = new TeamPlayer(uuid);
 
                         String container = set.getString("Container");
                         String available = set.getString("Available");
@@ -131,7 +131,7 @@ public class TagsDBOperator extends DBOperator {
         });
     }
 
-    public CompletableFuture<Boolean> saveTag(ConfiguredTag tag) {
+    public CompletableFuture<Boolean> saveTeam(ConfiguredTeam tag) {
         return CompletableFuture.supplyAsync(() -> {
             ensureUsable();
 
@@ -148,7 +148,7 @@ public class TagsDBOperator extends DBOperator {
         });
     }
 
-    public CompletableFuture<Optional<ConfiguredTag>> loadTag(String identifier) {
+    public CompletableFuture<Optional<ConfiguredTeam>> loadTag(String identifier) {
         return CompletableFuture.supplyAsync(() -> {
             ensureUsable();
 
@@ -158,7 +158,7 @@ public class TagsDBOperator extends DBOperator {
 
             s1 = s1.replace("%identifier%", identifier);
 
-            AtomicReference<Optional<ConfiguredTag>> atomicReference = new AtomicReference<>(Optional.empty());
+            AtomicReference<Optional<ConfiguredTeam>> atomicReference = new AtomicReference<>(Optional.empty());
             this.executeQuery(s1, set -> {
                 if (set == null) {
                     atomicReference.set(Optional.empty());
@@ -167,7 +167,7 @@ public class TagsDBOperator extends DBOperator {
 
                 try {
                     if (set.next()) {
-                        ConfiguredTag tag = new ConfiguredTag(identifier);
+                        ConfiguredTeam tag = new ConfiguredTeam(identifier);
 
                         String value = set.getString("Value");
 
@@ -232,7 +232,7 @@ public class TagsDBOperator extends DBOperator {
             if (s1 == null) return false;
             if (s1.isBlank() || s1.isEmpty()) return false;
 
-            TagManager.unregisterAllTags();
+            TeamManager.unregisterAllTeams();
 
             this.executeQuery(s1, set -> {
                 if (set == null) {
@@ -244,7 +244,7 @@ public class TagsDBOperator extends DBOperator {
                         String identifier = set.getString("Identifier");
                         String value = set.getString("Value");
 
-                        ConfiguredTag tag = new ConfiguredTag(identifier, value);
+                        ConfiguredTeam tag = new ConfiguredTeam(identifier, value);
                         tag.register();
                     }
 
@@ -258,7 +258,7 @@ public class TagsDBOperator extends DBOperator {
         });
     }
 
-    public CompletableFuture<Boolean> dropTag(String identifier) {
+    public CompletableFuture<Boolean> dropTeam(String identifier) {
         return CompletableFuture.supplyAsync(() -> {
             ensureUsable();
 

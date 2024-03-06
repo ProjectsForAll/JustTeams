@@ -1,8 +1,6 @@
 package host.plas.justtags.timers;
 
-import host.plas.justtags.data.ConfiguredTag;
-import host.plas.justtags.data.TagPlayer;
-import host.plas.justtags.managers.TagManager;
+import host.plas.justtags.managers.TeamManager;
 import io.streamlined.bukkit.instances.BaseRunnable;
 
 public class AutoCleanTimer extends BaseRunnable {
@@ -12,13 +10,13 @@ public class AutoCleanTimer extends BaseRunnable {
 
     @Override
     public void execute() {
-        TagManager.ensurePlayers();
+        TeamManager.ensurePlayers();
 
-        TagManager.getPlayers().forEach(tagPlayer -> {
+        TeamManager.getPlayers().forEach(tagPlayer -> {
             tagPlayer.cleanMap();
 
             if (! tagPlayer.isOnline()) {
-                TagManager.unregisterPlayer(tagPlayer);
+                TeamManager.unregisterPlayer(tagPlayer);
             }
         });
     }

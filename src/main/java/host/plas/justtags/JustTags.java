@@ -5,7 +5,7 @@ import host.plas.justtags.config.DatabaseConfig;
 import host.plas.justtags.config.MainConfig;
 import host.plas.justtags.database.TagsDBOperator;
 import host.plas.justtags.events.MainListener;
-import host.plas.justtags.managers.TagManager;
+import host.plas.justtags.managers.TeamManager;
 import host.plas.justtags.placeholders.PAPIExpansion;
 import host.plas.justtags.timers.AutoCleanTimer;
 import host.plas.justtags.timers.AutoSaveTimer;
@@ -74,7 +74,7 @@ public final class JustTags extends PluginBase {
                 }
 
                 Date lapse = new Date();
-                MessageUtils.logInfo("Loaded " + TagManager.getTags().size() + " tags into memory! Took " + (lapse.getTime() - now.getTime()) + " milliseconds!");
+                MessageUtils.logInfo("Loaded " + TeamManager.getTags().size() + " tags into memory! Took " + (lapse.getTime() - now.getTime()) + " milliseconds!");
             });
         } catch (Exception e) {
             e.printStackTrace();
@@ -95,12 +95,12 @@ public final class JustTags extends PluginBase {
     public void onBaseDisable() {
         // Plugin shutdown logic
 
-        TagManager.getPlayers().forEach(player -> {
+        TeamManager.getPlayers().forEach(player -> {
             player.save(false);
             player.unregister();
         });
 
-        TagManager.getTags().forEach(tag -> {
+        TeamManager.getTags().forEach(tag -> {
             tag.save();
             tag.unregister();
         });

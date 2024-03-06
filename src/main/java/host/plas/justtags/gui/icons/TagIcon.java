@@ -1,8 +1,8 @@
 package host.plas.justtags.gui.icons;
 
-import host.plas.justtags.data.ConfiguredTag;
-import host.plas.justtags.data.TagPlayer;
-import host.plas.justtags.managers.TagManager;
+import host.plas.justtags.data.ConfiguredTeam;
+import host.plas.justtags.data.TeamPlayer;
+import host.plas.justtags.managers.TeamManager;
 import host.plas.justtags.utils.MessageUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +11,6 @@ import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -23,9 +22,9 @@ import java.util.Optional;
 @Getter @Setter
 public class TagIcon extends Icon {
     private String tagIdentifier;
-    private TagPlayer player;
+    private TeamPlayer player;
 
-    public TagIcon(String tagIdentifier, TagPlayer player) {
+    public TagIcon(String tagIdentifier, TeamPlayer player) {
         super(getTagMaterial(player, tagIdentifier));
 
         this.tagIdentifier = tagIdentifier;
@@ -38,20 +37,20 @@ public class TagIcon extends Icon {
 //        setLore(getLore());
     }
 
-    public static boolean isEquipped(TagPlayer player, String tagIdentifier) {
+    public static boolean isEquipped(TeamPlayer player, String tagIdentifier) {
         return getIndex(player, tagIdentifier) >= 0;
     }
 
-    public static boolean isShown(TagPlayer player, String tagIdentifier) {
+    public static boolean isShown(TeamPlayer player, String tagIdentifier) {
         return
                 getIndex(player, tagIdentifier) <= player.getFinalMaxTags()
                         && isEquipped(player, tagIdentifier);
     }
 
-    public static Map.Entry<Integer, ConfiguredTag> getEntry(TagPlayer player, String tagIdentifier) {
-        Map.Entry<Integer, ConfiguredTag> entry = null;
+    public static Map.Entry<Integer, ConfiguredTeam> getEntry(TeamPlayer player, String tagIdentifier) {
+        Map.Entry<Integer, ConfiguredTeam> entry = null;
 
-        for (Map.Entry<Integer, ConfiguredTag> e : player.getContainer().entrySet()) {
+        for (Map.Entry<Integer, ConfiguredTeam> e : player.getContainer().entrySet()) {
             if (e.getValue().getIdentifier().equals(tagIdentifier)) {
                 entry = e;
                 break;
@@ -61,8 +60,8 @@ public class TagIcon extends Icon {
         return entry;
     }
 
-    public static int getIndex(TagPlayer player, String tagIdentifier) {
-        Map.Entry<Integer, ConfiguredTag> entry = getEntry(player, tagIdentifier);
+    public static int getIndex(TeamPlayer player, String tagIdentifier) {
+        Map.Entry<Integer, ConfiguredTeam> entry = getEntry(player, tagIdentifier);
         if (entry == null) {
             return -2; // not found -> -1 = not equipped
         }
@@ -70,41 +69,41 @@ public class TagIcon extends Icon {
         return entry.getKey();
     }
     
-    public Optional<ConfiguredTag> getTag() {
-        return TagManager.getTag(getTagIdentifier());
+    public Optional<ConfiguredTeam> getTag() {
+        return TeamManager.getTeam(getTagIdentifier());
     }
 
-    public static BaseComponent[] getIconName(TagPlayer player, String tagIdentifier) {
-        Optional<ConfiguredTag> tag = TagManager.getTag(tagIdentifier);
+    public static BaseComponent[] getIconName(TeamPlayer player, String tagIdentifier) {
+        Optional<ConfiguredTeam> tag = TeamManager.getTeam(tagIdentifier);
         if (tag.isPresent()) {
-            ConfiguredTag configuredTag = tag.get();
-            return MessageUtils.color("&7(" + (player.hasTag(tagIdentifier) ? "&aEquipped" : "&cUnequipped") + "&7) &bTag&7: &r" + configuredTag.getValue());
+            ConfiguredTeam configuredTeam = tag.get();
+            return MessageUtils.color("&7(" + (player.hasTag(tagIdentifier) ? "&aEquipped" : "&cUnequipped") + "&7) &bTag&7: &r" + configuredTeam.getValue());
         }
 
         return MessageUtils.color("&cUnknown Tag");
     }
 
-    public static Component getIconNameComp(TagPlayer player, String tagIdentifier) {
-        Optional<ConfiguredTag> tag = TagManager.getTag(tagIdentifier);
+    public static Component getIconNameComp(TeamPlayer player, String tagIdentifier) {
+        Optional<ConfiguredTeam> tag = TeamManager.getTeam(tagIdentifier);
         if (tag.isPresent()) {
-            ConfiguredTag configuredTag = tag.get();
-            return MessageUtils.colorizeComp("&7(" + (player.hasTag(tagIdentifier) ? "&aEquipped" : "&cUnequipped") + "&7) &bTag&7: &r" + configuredTag.getValue());
+            ConfiguredTeam configuredTeam = tag.get();
+            return MessageUtils.colorizeComp("&7(" + (player.hasTag(tagIdentifier) ? "&aEquipped" : "&cUnequipped") + "&7) &bTag&7: &r" + configuredTeam.getValue());
         }
 
         return MessageUtils.colorizeComp("&cUnknown Tag");
     }
 
-    public static String getIconNameHard(TagPlayer player, String tagIdentifier) {
-        Optional<ConfiguredTag> tag = TagManager.getTag(tagIdentifier);
+    public static String getIconNameHard(TeamPlayer player, String tagIdentifier) {
+        Optional<ConfiguredTeam> tag = TeamManager.getTeam(tagIdentifier);
         if (tag.isPresent()) {
-            ConfiguredTag configuredTag = tag.get();
-            return MessageUtils.colorizeHard("&7(" + (player.hasTag(tagIdentifier) ? "&aEquipped" : "&cUnequipped") + "&7) &bTag&7: &r" + configuredTag.getValue());
+            ConfiguredTeam configuredTeam = tag.get();
+            return MessageUtils.colorizeHard("&7(" + (player.hasTag(tagIdentifier) ? "&aEquipped" : "&cUnequipped") + "&7) &bTag&7: &r" + configuredTeam.getValue());
         }
 
         return MessageUtils.colorizeHard("&cUnknown Tag");
     }
 
-    public static List<BaseComponent[]> getLore(TagPlayer player, String tagIdentifier) {
+    public static List<BaseComponent[]> getLore(TeamPlayer player, String tagIdentifier) {
         return List.of(
                 MessageUtils.color("&eEquipped&7? " + (isEquipped(player, tagIdentifier) ? "&aYes" : "&cNo")),
                 MessageUtils.color("&eShown&7? " + (isShown(player, tagIdentifier) ? "&aYes" : "&cNo")),
@@ -114,7 +113,7 @@ public class TagIcon extends Icon {
         );
     }
 
-    public static List<Component> getLoreComp(TagPlayer player, String tagIdentifier) {
+    public static List<Component> getLoreComp(TeamPlayer player, String tagIdentifier) {
         return List.of(
                 MessageUtils.colorizeComp("&eEquipped&7? " + (isEquipped(player, tagIdentifier) ? "&aYes" : "&cNo")),
                 MessageUtils.colorizeComp("&eShown&7? " + (isShown(player, tagIdentifier) ? "&aYes" : "&cNo")),
@@ -124,7 +123,7 @@ public class TagIcon extends Icon {
         );
     }
 
-    public static List<String> getLoreHard(TagPlayer player, String tagIdentifier) {
+    public static List<String> getLoreHard(TeamPlayer player, String tagIdentifier) {
         return List.of(
                 MessageUtils.colorizeHard("&eEquipped&7? " + (isEquipped(player, tagIdentifier) ? "&aYes" : "&cNo")),
                 MessageUtils.colorizeHard("&eShown&7? " + (isShown(player, tagIdentifier) ? "&aYes" : "&cNo")),
@@ -134,7 +133,7 @@ public class TagIcon extends Icon {
         );
     }
 
-    public static ItemStack getTagMaterial(TagPlayer player, String tagIdentifier) {
+    public static ItemStack getTagMaterial(TeamPlayer player, String tagIdentifier) {
         ItemStack stack = new ItemStack(Material.NAME_TAG, 1);
         if (player.hasAvailableTag(tagIdentifier)) {
             ItemMeta meta = stack.getItemMeta();
@@ -158,8 +157,8 @@ public class TagIcon extends Icon {
         return stack;
     }
     
-    public static Optional<TagIcon> validateAndGet(String tagIdentifier, TagPlayer player) {
-        Optional<ConfiguredTag> tag = TagManager.getTag(tagIdentifier);
+    public static Optional<TagIcon> validateAndGet(String tagIdentifier, TeamPlayer player) {
+        Optional<ConfiguredTeam> tag = TeamManager.getTeam(tagIdentifier);
         if (tag.isEmpty()) {
             return Optional.empty();
         }

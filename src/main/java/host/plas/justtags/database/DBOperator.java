@@ -38,7 +38,8 @@ public class DBOperator {
 
                 break;
             case SQLITE:
-                config.setJdbcUrl(connectorSet.getUri());
+                File file = new File(getDatabaseFolder(), connectorSet.getSqliteFileName());
+                config.setJdbcUrl(connectorSet.getUri() + file.getPath());
 
                 break;
         }
